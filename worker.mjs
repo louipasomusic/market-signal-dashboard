@@ -1,4 +1,4 @@
-const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}</style><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section></main><script src="/dashboard.js" defer></script></html>';
+const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}</style><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section><section aria-labelledby="jarvis-title"><h2 id="jarvis-title">JARVIS</h2><p id="voice-status" role="status">Read the selected ticker’s headlines aloud or dictate a stock-list command.</p><nav aria-label="Voice controls"><button id="read-news">Read headlines</button><button id="stop-voice">Stop voice</button><button id="mic">Dictate command</button></nav><h3>Company news <span id="news-ticker"></span></h3><button id="refresh-news">Refresh news</button><p id="news-status" role="status"></p><ul id="news-items"></ul></section></main><script src="/dashboard.js" defer></script></html>';
 
 const client = `
 const form = document.querySelector("#lookup");
@@ -170,6 +170,86 @@ document.getElementById("list-command").addEventListener("submit", event => {
 });
 renderLists();
 
+let headlines = [];
+let newsRequest;
+let newsSymbol;
+const timeET = new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",dateStyle:"medium",timeStyle:"short"});
+async function loadNews() {
+  newsRequest?.abort();
+  const controller = newsRequest = new AbortController();
+  const symbol = form.elements.ticker.value.trim().toUpperCase();
+  newsSymbol = symbol;
+  headlines = [];
+  const items = document.getElementById("news-items");
+  items.replaceChildren();
+  set("news-ticker",symbol);
+  set("news-status","Loading headlines…");
+  try {
+    const data = await api("/api/news?" + new URLSearchParams({symbol}),controller.signal);
+    if (controller.signal.aborted) return;
+    headlines = data.articles;
+    set("news-status",headlines.length ? "Alpaca News · checked " + timeET.format(Date.now()) + " ET · feed may be delayed" : "No recent headlines returned.");
+    for (const article of headlines) {
+      const row = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = article.url;
+      link.rel = "noreferrer";
+      link.textContent = article.headline;
+      row.append(link," · " + article.publisher + " · " + timeET.format(Date.parse(article.published)) + " ET");
+      items.append(row);
+    }
+  } catch (error) {
+    if (!controller.signal.aborted) set("news-status",error.message);
+  }
+}
+document.getElementById("refresh-news").addEventListener("click",loadNews);
+form.addEventListener("submit",loadNews);
+document.getElementById("read-news").addEventListener("click",() => {
+  if (!headlines.length) { set("voice-status","Load headlines before reading them aloud."); return; }
+  const synth = window.speechSynthesis;
+  const voice = synth?.getVoices().find(item => item.localService && item.lang.toLowerCase().startsWith("en"));
+  if (!voice) { set("voice-status","No local English voice is available in this browser."); return; }
+  synth.cancel();
+  const speech = new SpeechSynthesisUtterance("Recent headlines for " + newsSymbol + ". " + headlines.slice(0,3).map(item => item.publisher + ". " + item.headline).join(". "));
+  speech.voice = voice;
+  speech.onend = () => set("voice-status","Finished reading headlines.");
+  speech.onerror = () => set("voice-status","The local voice stopped or was unavailable.");
+  set("voice-status","Reading headlines aloud.");
+  synth.speak(speech);
+});
+document.getElementById("stop-voice").addEventListener("click",() => window.speechSynthesis?.cancel());
+let recognition;
+document.getElementById("mic").addEventListener("click",async () => {
+  if (recognition) return;
+  const Speech = window.SpeechRecognition;
+  if (!Speech?.available || !("processLocally" in Speech.prototype)) {
+    set("voice-status","On-device dictation is unavailable. You can type your command.");
+    return;
+  }
+  try {
+    if (await Speech.available({langs:["en-US"],processLocally:true}) !== "available") {
+      set("voice-status","On-device English dictation requires a browser language pack. You can type your command.");
+      return;
+    }
+    if (recognition) return;
+    recognition = new Speech();
+    recognition.lang = "en-US";
+    recognition.processLocally = true;
+    recognition.onresult = event => {
+      document.querySelector("#list-command").elements.command.value = event.results[0][0].transcript.trim().replace(/[.!?]+$/,"");
+      set("voice-status","Review the dictated command and press Add to list.");
+    };
+    recognition.onerror = () => set("voice-status","On-device dictation failed. Check microphone access or type the command.");
+    recognition.onend = () => { recognition = null; };
+    recognition.start();
+    set("voice-status","Listening on this device…");
+  } catch {
+    recognition = null;
+    set("voice-status","On-device dictation could not start.");
+  }
+});
+loadNews();
+
 loadPrices(); loadFilings(); loadPaper();
 `;
 
@@ -246,6 +326,20 @@ async function priceData(symbol, source, range, env) {
   }
   return {symbol, source:label, frequency:range.frequency, points:normalize(rows)};
 }
+async function companyNews(symbol, env) {
+  const url = new URL("https://data.alpaca.markets/v1beta1/news");
+  const start = new Date(Date.now() - 7 * DAY).toISOString();
+  url.search = new URLSearchParams({symbols:symbol,start,sort:"desc",limit:"12",include_content:"false"});
+  const result = await upstream(url,"Alpaca News",{headers:alpacaHeaders(env)});
+  return {articles:(result.news || []).flatMap(item => {
+    if (typeof item.headline !== "string" || typeof item.source !== "string" || !Number.isFinite(Date.parse(item.created_at))) return [];
+    let link;
+    try { link = new URL(item.url); } catch { return []; }
+    if (link.protocol !== "https:" || link.username || link.password) return [];
+    return [{headline:item.headline,publisher:item.source,published:item.created_at,url:link.href}];
+  }).sort((a,b) => Date.parse(b.published)-Date.parse(a.published))};
+}
+
 let secDirectory;
 async function filings(symbol, env) {
   if (!env.SEC_USER_AGENT) throw new RequestError(503,"SEC EDGAR contact information is not configured.");
@@ -328,10 +422,11 @@ export default {
     if (url.pathname === "/dashboard.js") return send(client,200,"text/javascript; charset=utf-8");
     try {
       if (url.pathname === "/api/paper") return send(await paper(env));
-      if (!["/api/filings","/api/prices"].includes(url.pathname)) return send({error:"Not found."},404);
+      if (!["/api/filings","/api/prices","/api/news"].includes(url.pathname)) return send({error:"Not found."},404);
       const symbol = (url.searchParams.get("symbol") || "").trim().toUpperCase();
       if (!/^[A-Z][A-Z0-9.-]{0,11}$/.test(symbol)) throw new RequestError(400,"Enter a valid U.S. ticker.");
       if (url.pathname === "/api/filings") return send(await filings(symbol,env));
+      if (url.pathname === "/api/news") return send(await companyNews(symbol,env));
       const range = ranges[url.searchParams.get("range")];
       if (!Object.values(ranges).includes(range)) throw new RequestError(400,"Select a supported period.");
       return send(await priceData(symbol,url.searchParams.get("source"),range,env));

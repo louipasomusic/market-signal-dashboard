@@ -86,7 +86,7 @@ async function loadFilings() {
   try {
     const data = await api("/api/filings?" + new URLSearchParams({symbol:form.elements.ticker.value.trim().toUpperCase()}),controller.signal);
     if (controller.signal.aborted) return;
-    set("filingStatus", data.filings.length ? data.company : "No filings found.");
+    set("filingStatus", data.filings.length ? data.company + (data.snapshotAsOf ? " · SEC snapshot retrieved " + date.format(Date.parse(data.snapshotAsOf)) + " · live refresh unavailable" : " · SEC EDGAR") : "No filings found for this ticker.");
     for (const filing of data.filings) {
       const li = document.createElement("li"), link = document.createElement("a");
       link.href = filing.url;
@@ -360,23 +360,41 @@ async function companyNews(symbol, env) {
   }).sort((a,b) => Date.parse(b.published)-Date.parse(a.published))};
 }
 
+const secSnapshot = {"asOf":"2026-11-21T03:59:49.254Z","records":{"SPY":{"cik":884394,"company":"SPDR S&P 500 ETF TRUST","filings":[["NPORT-P","2026-08-28","000141036826089410","xslFormNPORT-P_X01/primary_doc.xml"],["N-30D","2026-05-29","000119312526247066","d75559dn30d.htm"],["NPORT-P","2026-05-28","000141036826055357","xslFormNPORT-P_X01/primary_doc.xml"],["N-CEN","2026-03-13","000141036826023904","xslFormN-CEN_X01/primary_doc.xml"],["NPORT-P","2026-02-26","000141036826020131","xslFormNPORT-P_X01/primary_doc.xml"],["497","2026-01-27","000119312526023648","d935960d497.htm"],["497","2026-01-26","000119312526022775","d77353d497.htm"],["485BPOS","2026-01-26","000119312526022316","d77353d485bpos.htm"]]},"AMD":{"cik":2488,"company":"ADVANCED MICRO DEVICES INC","filings":[["8-K","2026-11-20","000000248826000218","amd-20261118.htm"],["4","2026-11-19","000000248826000215","xslF345X06/wk-form4_1795122423.xml"],["4","2026-11-18","000000248826000213","xslF345X06/wk-form4_1795036763.xml"],["4","2026-11-17","000000248826000211","xslF345X06/wk-form4_1794950949.xml"],["4","2026-11-17","000000248826000209","xslF345X06/wk-form4_1794950650.xml"],["4","2026-11-17","000000248826000207","xslF345X06/wk-form4_1794950524.xml"],["4","2026-11-17","000000248826000205","xslF345X06/wk-form4_1794950405.xml"],["4","2026-11-17","000000248826000203","xslF345X06/wk-form4_1794950257.xml"]]},"NVDA":{"cik":1045810,"company":"NVIDIA CORP","filings":[["144","2026-11-19","000192109426001223","xsl144X01/primary_doc.xml"],["8-K","2026-11-17","000104581026000088","nvda-20261117.htm"],["13F-HR","2026-11-16","000104581026000084","xslForm13F_X02/primary_doc.xml"],["8-K","2026-11-12","000104581026000082","nvda-20261111.htm"],["4","2026-11-06","000119764726000013","xslF345X06/wk-form4_1793999520.xml"],["4/A","2026-10-13","000215218826000007","xslF345X06/wk-form4a_1791925767.xml"],["4","2026-10-09","000119764726000011","xslF345X06/wk-form4_1791579847.xml"],["4","2026-09-23","000169684126000014","xslF345X06/wk-form4_1790196985.xml"]]},"GOOGL":{"cik":1652044,"company":"Alphabet Inc.","filings":[["8-A12B","2026-11-20","000119312526470391","d142213d8a12b.htm"],["FWP","2026-11-20","000119312526469213","d21316dfwp.htm"],["424B5","2026-11-19","000119312526467927","d115240d424b5.htm"],["4","2026-11-16","000119312526464050","xslF345X06/ownership.xml"],["4","2026-11-16","000119312526463983","xslF345X06/ownership.xml"],["144","2026-11-12","000196858226001139","xsl144X01/primary_doc.xml"],["144","2026-11-12","000196858226001138","xsl144X01/primary_doc.xml"],["144","2026-11-12","000196858226001137","xsl144X01/primary_doc.xml"]]},"VOO":{"cik":36405,"company":"VANGUARD INDEX FUNDS","filings":[["40-17G","2026-10-09","000110465926115035","tm2624560d1_4017g.pdf"],["497","2026-09-16","000119312526392561","f46182d1.htm"],["NPORT-P","2026-08-28","000003640526000483","xslFormNPORT-P_X01/primary_doc.xml"],["NPORT-P","2026-08-28","000003640526000482","xslFormNPORT-P_X01/primary_doc.xml"],["NPORT-P","2026-08-28","000003640526000481","xslFormNPORT-P_X01/primary_doc.xml"],["NPORT-P","2026-08-28","000003640526000480","xslFormNPORT-P_X01/primary_doc.xml"],["NPORT-P","2026-08-28","000003640526000479","xslFormNPORT-P_X01/primary_doc.xml"],["NPORT-P","2026-08-28","000003640526000478","xslFormNPORT-P_X01/primary_doc.xml"]]},"AAPL":{"cik":320193,"company":"Apple Inc.","filings":[["4","2026-11-19","000114036126044952","xslF345X06/form4.xml"],["4","2026-11-18","000114036126044773","xslF345X06/form4.xml"],["144","2026-11-16","000192109426001188","xsl144X01/primary_doc.xml"],["4","2026-11-12","000114036126043484","xslF345X06/form4.xml"],["25-NSE","2026-11-09","000135445726001062","xslF25X02/primary_doc.xml"],["8-K","2026-11-09","000114036126042798","ef20085077_8k.htm"],["424B2","2026-11-06","000114036126042505","ny20084621x2_424b2.htm"],["FWP","2026-11-06","000114036126042173","ny20084621x3_fwp.htm"]]}}};
 let secDirectory;
+function secDocumentUrl(cik, accession, document) {
+  return "https://www.sec.gov/Archives/edgar/data/" + cik + "/" + accession + "/" + document.split("/").map(encodeURIComponent).join("/");
+}
 async function filings(symbol, env) {
+  const snapshot = Object.hasOwn(secSnapshot.records,symbol) ? secSnapshot.records[symbol] : null;
+  try {
+    return await liveFilings(symbol,env,snapshot);
+  } catch (error) {
+    if (!snapshot) throw error;
+    return {company:snapshot.company, snapshotAsOf:secSnapshot.asOf, filings:snapshot.filings.map(([form,date,accession,document]) => ({
+      form,date,url:secDocumentUrl(snapshot.cik,accession,document),
+    }))};
+  }
+}
+async function liveFilings(symbol, env, snapshot) {
   if (!env.SEC_USER_AGENT) throw new RequestError(503,"SEC EDGAR contact information is not configured.");
   const options = {headers:{"User-Agent":env.SEC_USER_AGENT,Accept:"application/json"}};
+  let company = snapshot ? {cik_str:snapshot.cik,title:snapshot.company} : null;
+  if (!company) {
   if (!secDirectory || secDirectory.expires <= Date.now()) {
     const next = upstream("https://www.sec.gov/files/company_tickers.json","SEC ticker directory",options);
     secDirectory = {expires:Date.now()+DAY,next};
     next.catch(() => { if (secDirectory?.next === next) secDirectory = null; });
   }
   const directory = await secDirectory.next;
-  const company = Object.values(directory).find(entry => entry.ticker === symbol || entry.ticker.replaceAll("-",".") === symbol);
+  company = Object.values(directory).find(entry => entry.ticker === symbol || entry.ticker.replaceAll("-",".") === symbol);
+  }
   if (!company) return {company:symbol,filings:[]};
   const data = await upstream("https://data.sec.gov/submissions/CIK" + String(company.cik_str).padStart(10,"0") + ".json","SEC filings",options);
   const recent = data.filings?.recent;
   return {company:data.name || company.title,filings:(recent?.accessionNumber || []).slice(0,10).map((id,i) => ({
     form:recent.form[i],date:recent.filingDate[i],
-    url:"https://www.sec.gov/Archives/edgar/data/" + company.cik_str + "/" + id.replaceAll("-","") + "/" + encodeURIComponent(recent.primaryDocument[i]),
+    url:secDocumentUrl(company.cik_str,id.replaceAll("-",""),recent.primaryDocument[i]),
   }))};
 }
 async function paper(env) {

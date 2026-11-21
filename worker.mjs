@@ -214,7 +214,7 @@ document.getElementById("read-news").addEventListener("click",() => {
   set("voice-status","Reading headlines aloud.");
   synth.speak(speech);
 });
-document.getElementById("stop-voice").addEventListener("click",() => window.speechSynthesis?.cancel());
+document.getElementById("stop-voice").addEventListener("click",() => { window.speechSynthesis?.cancel(); recognition?.abort(); });
 let recognition;
 const voiceInstall = document.getElementById("voice-install");
 const speechOptions = {langs:["en-US"],processLocally:true};
@@ -239,35 +239,80 @@ voiceInstall.addEventListener("click", async () => {
     voiceInstall.disabled = false;
   }
 });
-document.getElementById("mic").addEventListener("click",async () => {
-  if (recognition) return;
+const dictateButton = document.getElementById("mic");
+dictateButton.addEventListener("click", async () => {
+  if (dictateButton.disabled) return;
   const Speech = window.SpeechRecognition;
-  if (!Speech?.available || !("processLocally" in Speech.prototype)) {
-    set("voice-status","On-device dictation is unavailable. You can type your command.");
+  if (!Speech?.available || !("processLocally" in Speech.prototype) || !navigator.mediaDevices?.getUserMedia) {
+    set("voice-status","This browser cannot run on-device microphone dictation. Open the dashboard directly in desktop Chrome.");
     return;
   }
+  dictateButton.disabled = true;
+  let stream;
+  let timer;
+  let finished = false;
+  function finish(message) {
+    if (finished) return;
+    finished = true;
+    clearTimeout(timer);
+    stream?.getTracks().forEach(track => track.stop());
+    recognition = null;
+    dictateButton.disabled = false;
+    set("voice-status", message);
+  }
   try {
+    set("voice-status","Checking English voice setup…");
     const availability = await Speech.available(speechOptions);
     if (availability !== "available") {
       voiceInstall.hidden = availability === "unavailable" || typeof Speech.install !== "function";
-      set("voice-status",voiceInstall.hidden ? "On-device English speech is unavailable in this browser. Try desktop Chrome or type your command." : "Select Enable English voice to download the on-device speech pack.");
+      finish(voiceInstall.hidden ? "On-device English speech is unavailable in this browser." : "Select Enable English voice to download the on-device speech pack.");
       return;
     }
-    if (recognition) return;
-    recognition = new Speech();
-    recognition.lang = "en-US";
-    recognition.processLocally = true;
-    recognition.onresult = event => {
-      document.querySelector("#list-command").elements.command.value = event.results[0][0].transcript.trim().replace(/[.!?]+$/,"");
-      set("voice-status","Review the dictated command and press Add to list.");
+    set("voice-status","Waiting for microphone access…");
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const track = stream.getAudioTracks()[0];
+    if (!track || track.readyState !== "live") {
+      finish("No active microphone was found. Select a microphone in your browser or system settings.");
+      return;
+    }
+    const session = recognition = new Speech();
+    session.lang = "en-US";
+    session.processLocally = true;
+    let heard = false;
+    session.onaudiostart = () => { if (!finished) set("voice-status","Listening on this device. Say a command."); };
+    session.onspeechstart = () => { if (!finished) set("voice-status","Listening · Speech detected."); };
+    session.onresult = event => {
+      if (finished) return;
+      heard = true;
+      const input = document.querySelector("#list-command").elements.command;
+      input.value = event.results[event.resultIndex ?? 0][0].transcript.trim().replace(/[.!?]+$/,"");
+      input.focus();
+      set("voice-status","Heard: " + input.value + " · Review it, then press Add.");
     };
-    recognition.onerror = event => set("voice-status",event.error === "not-allowed" ? "Allow microphone access for this site, then try again." : "On-device dictation failed. Retry or type your command.");
-    recognition.onend = () => { recognition = null; if (document.querySelector(".voice").dataset.active === "true") set("voice-status","Dictation stopped."); };
-    recognition.start();
-    set("voice-status","Listening on this device…");
-  } catch {
-    recognition = null;
-    set("voice-status","On-device dictation could not start.");
+    session.onerror = event => {
+      const messages = {
+        "not-allowed":"Allow microphone access for this site, then try again.",
+        "service-not-allowed":"This browser blocked on-device speech. Open the dashboard directly in desktop Chrome.",
+        "audio-capture":"The speech engine could not capture audio. Check your selected microphone.",
+        "no-speech":"No speech detected. Check your microphone input and try again.",
+        "language-not-supported":"Install the on-device English speech pack and try again.",
+        "network":"The browser speech engine could not start this session."
+      };
+      if (event.error === "language-not-supported" && typeof Speech.install === "function") voiceInstall.hidden = false;
+      finish(Object.hasOwn(messages,event.error) ? messages[event.error] : "Dictation ended (" + event.error + ").");
+    };
+    session.onend = () => finish(heard ? document.getElementById("voice-status").textContent : "Listening ended without a command. Check your microphone input and try again.");
+    timer = setTimeout(() => {
+      finish("Dictation timed out. Check the browser microphone indicator and try again.");
+      session.abort();
+    },20000);
+    set("voice-status","Microphone connected. Starting dictation…");
+    session.start(track);
+  } catch (error) {
+    finish(error.name === "NotAllowedError" ? "Microphone access was denied. Allow it in the browser’s site settings or open the dashboard directly in desktop Chrome." :
+      error.name === "NotFoundError" ? "No microphone was found. Connect or select an input device." :
+      error.name === "NotReadableError" ? "The microphone is busy or unavailable. Check your system input settings." :
+      "On-device dictation could not start (" + error.name + ").");
   }
 });
 loadNews();
@@ -422,6 +467,7 @@ async function liveFilings(symbol, env, snapshot) {
 function send(body, status = 200, type = "application/json; charset=utf-8") {
   return new Response(type.startsWith("application/json") ? JSON.stringify(body) : body,{status,headers:{
     "Content-Type":type,"Cache-Control":"no-store","X-Content-Type-Options":"nosniff",
+    "Permissions-Policy":"microphone=(self), on-device-speech-recognition=(self)",
     "Content-Security-Policy":"default-src 'self'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'",
   }});
 }

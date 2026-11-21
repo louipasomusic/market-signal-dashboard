@@ -254,6 +254,52 @@ document.getElementById("stop-voice").addEventListener("click",() => {
   if (stopDictation) stopDictation();
   else if (wasSpeaking) set("voice-status","Playback stopped. You can replay the last reply.");
 });
+async function respondToDictation(transcript) {
+  const command = transcript.trim().toLowerCase().replace(/[.!?,]+$/,"").replace(/^(?:hey +)?jarvis(?:[,:] +| +|$)/,"").trim();
+  if (!command || /^(?:hello|hey|hi|yo|what'?s up|are you there|you there)\\b/.test(command)) {
+    speakReply("I’m here, Loui. What ticker are we looking at?");
+    return;
+  }
+  if (/\\b(?:we lit|we're lit|we are lit|it'?s on|it is on|let'?s go)\\b/.test(command)) {
+    speakReply("We’re live, Loui. Give me a ticker and I’ll pull up the chart.");
+    return;
+  }
+  if (/^(?:thank you|thanks)\\b/.test(command)) { speakReply("Anytime, Loui."); return; }
+  if (/^(?:(?:read|show|give me) (?:the )?)?(?:news|headlines)$/.test(command)) {
+    if (!headlines.length) await loadNews();
+    document.getElementById("read-news").click();
+    return;
+  }
+  const list = /^(watch|watching|interested(?: in)?) +([$a-z0-9. -]+)$/.exec(command);
+  const chartCommand = /^(?:show(?: me)?|look up|open|price of|what(?:'s| is) the price of|how is) +([$a-z0-9. -]+?)(?: doing)?$/.exec(command);
+  const candidate = (list?.[2] || chartCommand?.[1] || "").trim().replace(/^\\$/,"");
+  const ticker = (/^(?:[a-z0-9] )+[a-z0-9]$/.test(candidate) ? candidate.replaceAll(" ","") : candidate).toUpperCase();
+  if (/^[A-Z][A-Z0-9.-]{0,11}$/.test(ticker)) {
+    const spokenTicker = ticker.split("").join(" ");
+    if (list) {
+      const category = list[1].startsWith("watch") ? "Watching" : "Interested";
+      const input = document.querySelector("#list-command").elements.command;
+      input.value = (category === "Watching" ? "watch " : "interested in ") + ticker;
+      input.focus();
+      speakReply("I can add " + spokenTicker + " to " + category + ". Press Add to confirm.");
+      return;
+    }
+    form.elements.ticker.value = ticker;
+    loadFilings();
+    loadNews();
+    set("voice-status","Looking up " + ticker + "…");
+    await loadPrices();
+    if (form.elements.ticker.value !== ticker) return;
+    if (points.length) {
+      speakReply("I opened " + spokenTicker + ". The latest bar on this chart closed at " + usd.format(points.at(-1).close) + ".");
+    } else {
+      speakReply("I opened " + spokenTicker + ", but the selected price feed did not return data.");
+    }
+    return;
+  }
+  speakReply("I can pull up a chart, read headlines, or add a ticker to your lists. Try show A M D.");
+}
+
 const dictateButton = document.getElementById("mic");
 const voiceInput = document.getElementById("voice-input");
 const voiceLevel = document.getElementById("voice-level");
@@ -343,7 +389,6 @@ dictateButton.addEventListener("click", async () => {
   if (dictateButton.disabled) return;
   stopSpeaking();
   dictateButton.disabled = true;
-  const input = document.querySelector("#list-command").elements.command;
   let stream, context, source, processor, recognizer, timer;
   let ended = false;
   let audioFrames = 0;
@@ -373,11 +418,8 @@ dictateButton.addEventListener("click", async () => {
       cleanup(!audioFrames ? "The browser opened the microphone but delivered no audio. Try a different microphone or open the dashboard in Chrome." : peakLevel < 0.004 ? "The microphone signal stayed silent. Check mute or select a different microphone." : "The microphone picked up sound, but no words were recognized. Speak close to the selected mic and try again.");
       return;
     }
-    input.value = transcript;
-    input.focus();
-    const message = "I heard " + transcript + ". Review the command, then press Add.";
-    cleanup(message);
-    speakReply(message);
+    cleanup("Processing command…");
+    respondToDictation(transcript).catch(() => speakReply("I couldn’t complete that request. Try again."));
   }
   function flush() {
     if (flushing || ended) return;

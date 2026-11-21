@@ -1,4 +1,4 @@
-const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}</style><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section><section aria-labelledby="jarvis-title"><h2 id="jarvis-title">JARVIS</h2><p id="voice-status" role="status">Read the selected ticker’s headlines aloud or dictate a stock-list command.</p><nav aria-label="Voice controls"><button id="read-news">Read headlines</button><button id="stop-voice">Stop voice</button><button id="mic">Dictate command</button></nav><h3>Company news <span id="news-ticker"></span></h3><button id="refresh-news">Refresh news</button><p id="news-status" role="status"></p><ul id="news-items"></ul></section></main><script src="/dashboard.js" defer></script></html>';
+const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}.workspace{display:grid;grid-template-columns:275px minmax(0,1fr);gap:24px;max-width:1300px;margin:auto;padding:0 20px}.workspace main{margin:0;padding-inline:0;min-width:0}.agent-sidebar{padding-top:32px}.agent-sidebar ul{padding-left:20px;line-height:1.4}@media(max-width:720px){.workspace{grid-template-columns:1fr;gap:0}.agent-sidebar{padding-top:8px}.workspace main{padding-top:0}}</style><div class="workspace"><aside class="agent-sidebar" aria-labelledby="agent-title"><section><h2 id="agent-title">Workspace agent</h2><h3>JARVIS</h3><p id="agent-status" role="status">Checking assignment…</p><button id="appoint-agent" disabled>Appoint JARVIS</button><h3>Tools and skills</h3><ul><li>Stock charts and SEC filings · Dashboard</li><li>Watching and Interested · Dashboard</li><li>Company headlines · Alpaca connection required</li><li>Paper portfolio · Alpaca Paper connection required</li><li>Voice and dictation · On-device browser support</li><li>Premarket research and public transcript review · Scheduled in ChatGPT</li><li>Agent Reach · Pending connection</li><li>Interactive Codex conversation · Pending connection</li></ul></section></aside><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section><section aria-labelledby="jarvis-title"><h2 id="jarvis-title">JARVIS</h2><p id="voice-status" role="status">Read the selected ticker’s headlines aloud or dictate a stock-list command.</p><nav aria-label="Voice controls"><button id="read-news">Read headlines</button><button id="stop-voice">Stop voice</button><button id="mic">Dictate command</button></nav><h3>Company news <span id="news-ticker"></span></h3><button id="refresh-news">Refresh news</button><p id="news-status" role="status"></p><ul id="news-items"></ul></section></main></div><script src="/dashboard.js" defer></script></html>';
 
 const client = `
 const form = document.querySelector("#lookup");
@@ -250,6 +250,26 @@ document.getElementById("mic").addEventListener("click",async () => {
 });
 loadNews();
 
+const appointButton = document.getElementById("appoint-agent");
+async function loadAssignment() {
+  try {
+    const data = await api("/api/agent-assignment");
+    set("agent-status",data.agent ? "Appointed to this workspace" : "No agent appointed.");
+    appointButton.textContent = data.agent ? "JARVIS appointed" : "Appoint JARVIS";
+    appointButton.disabled = Boolean(data.agent);
+  } catch (error) { set("agent-status",error.message); }
+}
+appointButton.addEventListener("click",async () => {
+  appointButton.disabled = true;
+  try {
+    const response = await fetch("/api/agent-assignment",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({agent:"jarvis"})});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Assignment failed.");
+    await loadAssignment();
+  } catch (error) { set("agent-status",error.message); appointButton.disabled = false; }
+});
+loadAssignment();
+
 loadPrices(); loadFilings(); loadPaper();
 `;
 
@@ -415,9 +435,23 @@ async function authorized(request, env) {
 
 export default {
   async fetch(request, env) {
-    if (request.method !== "GET") return send({error:"Method not allowed."},405);
     const url = new URL(request.url);
     if (!(await authorized(request,env))) return send({error:"Owner authentication required."},403);
+
+    if (url.pathname === "/api/agent-assignment") {
+      if (!env.WORKSPACE_ASSIGNMENTS) return send({error:"Workspace assignment storage is not configured."},503);
+      try {
+        if (request.method === "GET") return send({agent:await env.WORKSPACE_ASSIGNMENTS.get("owner-agent")});
+        if (request.method !== "PUT") return send({error:"Method not allowed."},405);
+        if (request.headers.get("Origin") !== url.origin) return send({error:"Same-origin request required."},403);
+        let body;
+        try { body = await request.json(); } catch { return send({error:"Invalid assignment."},400); }
+        if (body?.agent !== "jarvis") return send({error:"Unknown workspace agent."},400);
+        if (await env.WORKSPACE_ASSIGNMENTS.get("owner-agent") !== "jarvis") await env.WORKSPACE_ASSIGNMENTS.put("owner-agent","jarvis");
+        return send({agent:"jarvis"});
+      } catch { return send({error:"Could not read or save the workspace assignment."},502); }
+    }
+    if (request.method !== "GET") return send({error:"Method not allowed."},405);
     if (url.pathname === "/") return send(page,200,"text/html; charset=utf-8");
     if (url.pathname === "/dashboard.js") return send(client,200,"text/javascript; charset=utf-8");
     try {

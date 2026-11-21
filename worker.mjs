@@ -1,6 +1,6 @@
 import voskLocal from "./vosk-loader.txt";
 import voskEngine from "./vosk-engine.txt";
-const page = "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>JARVIS · Market Signal</title><style>*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}body{margin:0;background:#070e19;color:#e4f4ff;font:15px system-ui,sans-serif}button,input,select{font:inherit}button,input,select{background:#0d2031;color:#d8f4ff;border:1px solid #284760;border-radius:6px;padding:9px 12px}button{cursor:pointer}button:hover,a:hover{color:#8cf7ff;border-color:#55cfe5}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #5de5f3;outline-offset:3px}button:disabled{cursor:default;opacity:.55}a{color:#72dce6}p{color:#9cb5c8}ul{padding-left:20px}li{margin:8px 0}h1,h2,h3,p{margin-top:0}h2{font-size:18px}h3{font-size:14px}.workspace{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}.agent-sidebar{padding:26px 18px;background:#091522;border-right:1px solid #20384d}.brand{display:block;font-size:27px;font-weight:800;letter-spacing:.24em;color:#86f0ff}.rail-links{display:grid;gap:6px;margin:26px 0}.rail-links a{padding:9px;border:1px solid #20384d;border-radius:6px;text-decoration:none}.tool-list{list-style:none;padding:0;color:#9cb5c8;font-size:13px}.tool-list strong{color:#e4f4ff;display:block}.main{min-width:0;padding:28px clamp(16px,3vw,48px);max-width:1550px;width:100%}.top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:18px}.top h1{letter-spacing:.13em;margin:0;font-size:clamp(20px,3vw,30px)}.top form,.controls,.ranges,#list-command{display:flex;gap:8px;flex-wrap:wrap}.top input{width:94px}.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(245px,1fr);gap:16px}.card{border:1px solid #234458;border-radius:12px;background:linear-gradient(150deg,#102033,#091523);padding:20px;min-width:0}.card h2{letter-spacing:.05em}.chart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}button[aria-pressed=true]{color:#a1fbff;border-color:#52d7e6;background:#103749}#summary{color:#e4f4ff;font-size:32px;font-weight:650;margin:18px 0 10px}#details{font-size:13px;margin:12px 0 0}canvas{width:100%;height:290px}.voice{text-align:center}.core{width:112px;height:112px;border-radius:50%;margin:3px auto 18px;border:1px solid #4ebcda;display:grid;place-items:center;background:radial-gradient(circle,#20718a 0%,#0b2638 52%,#0b1829 70%);box-shadow:0 0 22px #2bc9ee44,inset 0 0 19px #2bc9ee44;color:#c9faff;letter-spacing:.15em;font-size:12px}.voice .controls{justify-content:center}.lists{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lists ul{list-style:none;padding:0}.lists li button{padding:5px 8px;margin-bottom:2px}#list-command input{flex:1;min-width:160px}#news-items,#filings{font-size:14px}@media(max-width:900px){.workspace{grid-template-columns:190px minmax(0,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:620px){.workspace{display:block}.agent-sidebar{border-right:0;border-bottom:1px solid #20384d}.rail-links{display:flex;flex-wrap:wrap;margin:12px 0}.main{padding:16px}.card{padding:14px}}\nbody{background:#03080d;color:#d9f8ff}.workspace{position:relative;isolation:isolate;background:radial-gradient(ellipse at 69% 31%,#12334688 0,transparent 48%),repeating-linear-gradient(0deg,#75ebff08 0 1px,transparent 1px 5px),radial-gradient(ellipse at 35% 50%,#081b32,#020509 75%)}.workspace:before{content:\"\";position:fixed;z-index:-1;pointer-events:none;inset:0;background:linear-gradient(#32d3ff15 1px,transparent 1px),linear-gradient(90deg,#32d3ff15 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at 63% 55%,black 0%,transparent 82%)}.agent-sidebar{background:#031018d9;border-color:#277487;box-shadow:inset -5px 0 28px #46e7ee10}.brand,.top h1,.card h2,.agent-sidebar h2,.agent-sidebar h3{font-family:Consolas,monospace;text-transform:uppercase}.brand{text-shadow:0 0 15px #45dcf4bb}.top{align-items:center;border-bottom:1px solid #2b8697;padding-bottom:13px}.top h1{color:#99f5ff}.tool-list strong{color:#a7f4ff}.rail-links a,.card,button,input,select{border-radius:0}.rail-links a{border-width:0 0 1px 2px;background:#16334373}.card{position:relative;border-color:#286e83;background:linear-gradient(135deg,#061521e8,#07101bd6 60%,#102c38b3);box-shadow:inset 0 0 20px #83e9ff0b}.card:before,.card:after{content:\"\";position:absolute;width:25px;height:14px;pointer-events:none}.card:before{top:-1px;left:-1px;border-top:2px solid #8bfbff;border-left:2px solid #8bfbff}.card:after{bottom:-1px;right:-1px;border-bottom:2px solid #8bfbff;border-right:2px solid #8bfbff}.grid{grid-template-columns:minmax(0,2fr) minmax(280px,1fr)}.voice{overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:395px;background:radial-gradient(circle at 50% 40%,#123e52a6 0%,#061521de 55%,#071019e8 100%)}.core{isolation:isolate;position:relative;width:192px;height:192px;max-width:70vw;max-height:70vw;border:0;background:radial-gradient(circle,#164d63 0%,#0c2638 37%,#6ee5ff70 38%,transparent 39%,transparent 44%,#a2f7ff99 45%,transparent 46%);box-shadow:none;font-family:Consolas,monospace;font-size:16px;text-shadow:0 0 12px #7ef6ff;letter-spacing:.19em}.core:before,.core:after{content:\"\";position:absolute;border-radius:50%;pointer-events:none}.core:before{inset:1px;background:repeating-conic-gradient(#8cf3ffd9 0deg 1deg,transparent 1deg 6deg);mask-image:radial-gradient(transparent 61%,black 62% 68%,transparent 69%);animation:hud-spin 40s linear infinite}.core:after{inset:14px;border:2px solid #236680;border-top-color:#affdff;border-bottom-color:#62e4ff;border-left-style:dashed;box-shadow:0 0 12px #3ad1ff66,inset 0 0 14px #3ad1ff44;animation:hud-spin 22s linear infinite reverse}.voice[data-active=true] .core{filter:brightness(1.35)}.voice[data-active=true] .core:after{animation-duration:4s}#voice-install{border-color:#52cede;color:#bbfaff}#voice-install[hidden]{display:none}@keyframes hud-spin{to{transform:rotate(1turn)}}@media(prefers-reduced-motion:reduce){.core:before,.core:after{animation:none}html{scroll-behavior:auto}}@media(max-width:900px){.grid{grid-template-columns:1fr}.voice{min-height:320px}}</style><div class=\"workspace\"><aside class=\"agent-sidebar\"><span class=\"brand\">JARVIS</span><nav class=\"rail-links\" aria-label=\"Workspace navigation\"><a href=\"#market\">Market</a><a href=\"#stock-lists\">Stock lists</a><a href=\"#news\">News</a><a href=\"#sec\">SEC filings</a></nav><h2>Workspace agent</h2><p id=\"agent-status\" role=\"status\">Checking assignment…</p><button id=\"appoint-agent\" disabled>Appoint JARVIS</button><h3 style=\"margin-top:24px\">Tools and skills</h3><ul class=\"tool-list\"><li><strong>Market charts</strong>Yahoo Finance, Alpaca IEX, Massive</li><li><strong>Voice controls</strong>On-device speech and dictation</li><li><strong>Premarket brief</strong>Weekdays at 9 a.m. ET in ChatGPT</li><li><strong>Company research</strong>Headlines and SEC filings</li><li><strong>Codex conversation</strong>Connection pending</li><li><strong>Agent Reach</strong>Connection pending</li></ul></aside><main class=\"main\"><header class=\"top\"><h1>MARKET OPERATIONS</h1><form id=\"lookup\"><input name=\"ticker\" aria-label=\"Stock ticker\" value=\"SPY\" maxlength=\"12\" required><select name=\"source\" aria-label=\"Price data source\"><option value=\"yahoo\">Yahoo Finance · Historical</option><option value=\"alpaca\">Alpaca Basic · IEX</option><option value=\"massive\">Massive · End of day</option></select><button>Load ticker</button></form></header><div class=\"grid\"><section class=\"card\" id=\"market\"><div class=\"chart-head\"><h2 id=\"symbol\">SPY</h2><nav class=\"ranges\" aria-label=\"Chart period\"><button data-range=\"7d\" aria-pressed=\"true\">7 days</button><button data-range=\"weekly\" aria-pressed=\"false\">Weekly</button><button data-range=\"monthly\" aria-pressed=\"false\">Monthly</button><button data-range=\"all\" aria-pressed=\"false\">All time</button></nav></div><p id=\"summary\" role=\"status\"></p><canvas hidden id=\"chart\" role=\"img\" aria-label=\"Historical closing prices\"></canvas><p id=\"details\"></p></section><section class=\"card voice\"><div class=\"core\" aria-hidden=\"true\">JARVIS</div><h2>Voice console</h2><p id=\"voice-status\" role=\"status\">Read headlines aloud or dictate a stock-list command.</p><div class=\"controls\"><button id=\"mic\">Dictate command</button><button id=\"read-news\">Read headlines</button><button id=\"stop-voice\">Stop</button></div></section><section class=\"card\" id=\"news\"><h2>Company news <span id=\"news-ticker\"></span></h2><button id=\"refresh-news\">Refresh news</button><p id=\"news-status\" role=\"status\"></p><ul id=\"news-items\"></ul></section><section class=\"card\" id=\"stock-lists\"><h2>Stock lists</h2><form id=\"list-command\"><input name=\"command\" aria-label=\"Stock list command\" placeholder=\"watch AMD or interested in NVDA\" maxlength=\"45\" required><button>Add</button></form><p id=\"list-status\" role=\"status\"></p><div class=\"lists\"><div><h3>Watching</h3><ul id=\"watching\"></ul></div><div><h3>Interested</h3><ul id=\"interested\"></ul></div></div></section><section class=\"card\" id=\"sec\"><h2>SEC filings</h2><p id=\"filingStatus\" role=\"status\"></p><ul id=\"filings\"></ul></section></div></main></div><script src=\"/dashboard.js\" defer></script></html>";
+const page = "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>JARVIS · Market Signal</title><style>*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}body{margin:0;background:#070e19;color:#e4f4ff;font:15px system-ui,sans-serif}button,input,select{font:inherit}button,input,select{background:#0d2031;color:#d8f4ff;border:1px solid #284760;border-radius:6px;padding:9px 12px}button{cursor:pointer}button:hover,a:hover{color:#8cf7ff;border-color:#55cfe5}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #5de5f3;outline-offset:3px}button:disabled{cursor:default;opacity:.55}a{color:#72dce6}p{color:#9cb5c8}ul{padding-left:20px}li{margin:8px 0}h1,h2,h3,p{margin-top:0}h2{font-size:18px}h3{font-size:14px}.workspace{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}.agent-sidebar{padding:26px 18px;background:#091522;border-right:1px solid #20384d}.brand{display:block;font-size:27px;font-weight:800;letter-spacing:.24em;color:#86f0ff}.rail-links{display:grid;gap:6px;margin:26px 0}.rail-links a{padding:9px;border:1px solid #20384d;border-radius:6px;text-decoration:none}.tool-list{list-style:none;padding:0;color:#9cb5c8;font-size:13px}.tool-list strong{color:#e4f4ff;display:block}.main{min-width:0;padding:28px clamp(16px,3vw,48px);max-width:1550px;width:100%}.top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:18px}.top h1{letter-spacing:.13em;margin:0;font-size:clamp(20px,3vw,30px)}.top form,.controls,.ranges,#list-command{display:flex;gap:8px;flex-wrap:wrap}.top input{width:94px}.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(245px,1fr);gap:16px}.card{border:1px solid #234458;border-radius:12px;background:linear-gradient(150deg,#102033,#091523);padding:20px;min-width:0}.card h2{letter-spacing:.05em}.chart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}button[aria-pressed=true]{color:#a1fbff;border-color:#52d7e6;background:#103749}#summary{color:#e4f4ff;font-size:32px;font-weight:650;margin:18px 0 10px}#details{font-size:13px;margin:12px 0 0}canvas{width:100%;height:290px}.voice{text-align:center}.core{width:112px;height:112px;border-radius:50%;margin:3px auto 18px;border:1px solid #4ebcda;display:grid;place-items:center;background:radial-gradient(circle,#20718a 0%,#0b2638 52%,#0b1829 70%);box-shadow:0 0 22px #2bc9ee44,inset 0 0 19px #2bc9ee44;color:#c9faff;letter-spacing:.15em;font-size:12px}.voice .controls{justify-content:center}.lists{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lists ul{list-style:none;padding:0}.lists li button{padding:5px 8px;margin-bottom:2px}#list-command input{flex:1;min-width:160px}#news-items,#filings{font-size:14px}@media(max-width:900px){.workspace{grid-template-columns:190px minmax(0,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:620px){.workspace{display:block}.agent-sidebar{border-right:0;border-bottom:1px solid #20384d}.rail-links{display:flex;flex-wrap:wrap;margin:12px 0}.main{padding:16px}.card{padding:14px}}\nbody{background:#03080d;color:#d9f8ff}.workspace{position:relative;isolation:isolate;background:radial-gradient(ellipse at 69% 31%,#12334688 0,transparent 48%),repeating-linear-gradient(0deg,#75ebff08 0 1px,transparent 1px 5px),radial-gradient(ellipse at 35% 50%,#081b32,#020509 75%)}.workspace:before{content:\"\";position:fixed;z-index:-1;pointer-events:none;inset:0;background:linear-gradient(#32d3ff15 1px,transparent 1px),linear-gradient(90deg,#32d3ff15 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at 63% 55%,black 0%,transparent 82%)}.agent-sidebar{background:#031018d9;border-color:#277487;box-shadow:inset -5px 0 28px #46e7ee10}.brand,.top h1,.card h2,.agent-sidebar h2,.agent-sidebar h3{font-family:Consolas,monospace;text-transform:uppercase}.brand{text-shadow:0 0 15px #45dcf4bb}.top{align-items:center;border-bottom:1px solid #2b8697;padding-bottom:13px}.top h1{color:#99f5ff}.tool-list strong{color:#a7f4ff}.rail-links a,.card,button,input,select{border-radius:0}.rail-links a{border-width:0 0 1px 2px;background:#16334373}.card{position:relative;border-color:#286e83;background:linear-gradient(135deg,#061521e8,#07101bd6 60%,#102c38b3);box-shadow:inset 0 0 20px #83e9ff0b}.card:before,.card:after{content:\"\";position:absolute;width:25px;height:14px;pointer-events:none}.card:before{top:-1px;left:-1px;border-top:2px solid #8bfbff;border-left:2px solid #8bfbff}.card:after{bottom:-1px;right:-1px;border-bottom:2px solid #8bfbff;border-right:2px solid #8bfbff}.grid{grid-template-columns:minmax(0,2fr) minmax(280px,1fr)}.voice{overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:395px;background:radial-gradient(circle at 50% 40%,#123e52a6 0%,#061521de 55%,#071019e8 100%)}.core{isolation:isolate;position:relative;width:192px;height:192px;max-width:70vw;max-height:70vw;border:0;background:radial-gradient(circle,#164d63 0%,#0c2638 37%,#6ee5ff70 38%,transparent 39%,transparent 44%,#a2f7ff99 45%,transparent 46%);box-shadow:none;font-family:Consolas,monospace;font-size:16px;text-shadow:0 0 12px #7ef6ff;letter-spacing:.19em}.core:before,.core:after{content:\"\";position:absolute;border-radius:50%;pointer-events:none}.core:before{inset:1px;background:repeating-conic-gradient(#8cf3ffd9 0deg 1deg,transparent 1deg 6deg);mask-image:radial-gradient(transparent 61%,black 62% 68%,transparent 69%);animation:hud-spin 40s linear infinite}.core:after{inset:14px;border:2px solid #236680;border-top-color:#affdff;border-bottom-color:#62e4ff;border-left-style:dashed;box-shadow:0 0 12px #3ad1ff66,inset 0 0 14px #3ad1ff44;animation:hud-spin 22s linear infinite reverse}.voice[data-active=true] .core{filter:brightness(1.35)}.voice[data-active=true] .core:after{animation-duration:4s}#voice-install{border-color:#52cede;color:#bbfaff}#voice-install[hidden]{display:none}@keyframes hud-spin{to{transform:rotate(1turn)}}@media(prefers-reduced-motion:reduce){.core:before,.core:after{animation:none}html{scroll-behavior:auto}}@media(max-width:900px){.grid{grid-template-columns:1fr}.voice{min-height:320px}}</style><div class=\"workspace\"><aside class=\"agent-sidebar\"><span class=\"brand\">JARVIS</span><nav class=\"rail-links\" aria-label=\"Workspace navigation\"><a href=\"#market\">Market</a><a href=\"#stock-lists\">Stock lists</a><a href=\"#news\">News</a><a href=\"#sec\">SEC filings</a></nav><h2>Workspace agent</h2><p id=\"agent-status\" role=\"status\">Checking assignment…</p><button id=\"appoint-agent\" disabled>Appoint JARVIS</button><h3 style=\"margin-top:24px\">Tools and skills</h3><ul class=\"tool-list\"><li><strong>Market charts</strong>Yahoo Finance, Alpaca IEX, Massive</li><li><strong>Voice controls</strong>On-device speech and dictation</li><li><strong>Premarket brief</strong>Weekdays at 9 a.m. ET in ChatGPT</li><li><strong>Company research</strong>Headlines and SEC filings</li><li><strong>Codex conversation</strong>Connection pending</li><li><strong>Agent Reach</strong>Connection pending</li></ul></aside><main class=\"main\"><header class=\"top\"><h1>MARKET OPERATIONS</h1><form id=\"lookup\"><input name=\"ticker\" aria-label=\"Stock ticker\" value=\"SPY\" maxlength=\"12\" required><select name=\"source\" aria-label=\"Price data source\"><option value=\"yahoo\">Yahoo Finance · Historical</option><option value=\"alpaca\">Alpaca Basic · IEX</option><option value=\"massive\">Massive · End of day</option></select><button>Load ticker</button></form></header><div class=\"grid\"><section class=\"card\" id=\"market\"><div class=\"chart-head\"><h2 id=\"symbol\">SPY</h2><nav class=\"ranges\" aria-label=\"Chart period\"><button data-range=\"7d\" aria-pressed=\"true\">7 days</button><button data-range=\"weekly\" aria-pressed=\"false\">Weekly</button><button data-range=\"monthly\" aria-pressed=\"false\">Monthly</button><button data-range=\"all\" aria-pressed=\"false\">All time</button></nav></div><p id=\"summary\" role=\"status\"></p><canvas hidden id=\"chart\" role=\"img\" aria-label=\"Historical closing prices\"></canvas><p id=\"details\"></p></section><section class=\"card voice\"><div class=\"core\" aria-hidden=\"true\">JARVIS</div><h2>Voice console</h2><p id=\"voice-status\" role=\"status\">Read headlines aloud or dictate a stock-list command.</p><div class=\"controls\"><select id=\"voice-input\" aria-label=\"Microphone\"><option value=\"\">Default microphone</option></select><meter id=\"voice-level\" aria-label=\"Microphone signal level\" min=\"0\" max=\"100\" value=\"0\"></meter><button id=\"mic\">Dictate command</button><button id=\"read-news\">Read headlines</button><button id=\"stop-voice\">Stop</button></div></section><section class=\"card\" id=\"news\"><h2>Company news <span id=\"news-ticker\"></span></h2><button id=\"refresh-news\">Refresh news</button><p id=\"news-status\" role=\"status\"></p><ul id=\"news-items\"></ul></section><section class=\"card\" id=\"stock-lists\"><h2>Stock lists</h2><form id=\"list-command\"><input name=\"command\" aria-label=\"Stock list command\" placeholder=\"watch AMD or interested in NVDA\" maxlength=\"45\" required><button>Add</button></form><p id=\"list-status\" role=\"status\"></p><div class=\"lists\"><div><h3>Watching</h3><ul id=\"watching\"></ul></div><div><h3>Interested</h3><ul id=\"interested\"></ul></div></div></section><section class=\"card\" id=\"sec\"><h2>SEC filings</h2><p id=\"filingStatus\" role=\"status\"></p><ul id=\"filings\"></ul></section></div></main></div><script src=\"/dashboard.js\" defer></script></html>";
 
 const client = `
 const form = document.querySelector("#lookup");
@@ -218,6 +218,18 @@ document.getElementById("read-news").addEventListener("click",() => {
 });
 document.getElementById("stop-voice").addEventListener("click",() => { window.speechSynthesis?.cancel(); stopDictation?.(); });
 const dictateButton = document.getElementById("mic");
+const voiceInput = document.getElementById("voice-input");
+const voiceLevel = document.getElementById("voice-level");
+async function updateMicrophones() {
+  try {
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(device => device.kind === "audioinput" && device.deviceId && device.deviceId !== "default");
+    const selected = voiceInput.value;
+    voiceInput.replaceChildren(new Option("Default microphone",""),...devices.map((device,index) => new Option(device.label || "Microphone " + (index + 1),device.deviceId)));
+    if (devices.some(device => device.deviceId === selected)) voiceInput.value = selected;
+  } catch {}
+}
+updateMicrophones();
+navigator.mediaDevices?.addEventListener?.("devicechange",updateMicrophones);
 let stopDictation;
 let voiceModel;
 async function downloadVoiceArchive() {
@@ -296,12 +308,18 @@ dictateButton.addEventListener("click", async () => {
   const input = document.querySelector("#list-command").elements.command;
   let stream, context, source, processor, recognizer, timer;
   let ended = false;
+  let audioFrames = 0;
+  let peakLevel = 0;
+  let flushing = false;
   let finalText = "";
   let partial = "";
   function cleanup(message) {
     if (ended) return;
     ended = true;
     clearTimeout(timer);
+    if (processor?.port) processor.port.onmessage = null;
+    voiceLevel.value = 0;
+    voiceInput.disabled = false;
     processor?.disconnect();
     source?.disconnect();
     stream?.getTracks().forEach(track => track.stop());
@@ -313,23 +331,37 @@ dictateButton.addEventListener("click", async () => {
   }
   function stop() {
     const transcript = [finalText,partial].filter(Boolean).join(" ").trim();
-    if (!transcript) { cleanup("No command was recognized. Try again and speak after Listening appears."); return; }
+    if (!transcript) {
+      cleanup(!audioFrames ? "The browser opened the microphone but delivered no audio. Try a different microphone or open the dashboard in Chrome." : peakLevel < 0.004 ? "The microphone signal stayed silent. Check mute or select a different microphone." : "The microphone picked up sound, but no words were recognized. Speak close to the selected mic and try again.");
+      return;
+    }
     input.value = transcript;
     input.focus();
     cleanup("Heard: " + transcript + " · Review it, then press Add.");
   }
+  function flush() {
+    if (flushing || ended) return;
+    flushing = true;
+    clearTimeout(timer);
+    if (!audioFrames || typeof recognizer?.retrieveFinalResult !== "function") { stop(); return; }
+    recognizer.retrieveFinalResult();
+    if (!ended) timer = setTimeout(stop,1200);
+  }
   stopDictation = () => {
-    if (recognizer) stop();
+    if (recognizer) flush();
     else cleanup("Dictation canceled.");
   };
   try {
     set("voice-status","Waiting for microphone access…");
     context = new AudioContext();
     const resume = context.resume();
-    const mic = navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true}});
+    voiceInput.disabled = true;
+    const deviceId = voiceInput.value;
+    const mic = navigator.mediaDevices.getUserMedia({audio:{channelCount:1,autoGainControl:true,...(deviceId ? {deviceId:{exact:deviceId}} : {})}});
     const microphone = mic.then(value => {
       if (ended) { value.getTracks().forEach(track => track.stop()); return; }
       stream = value;
+      updateMicrophones();
     });
     await Promise.all([resume,microphone]);
     if (ended) return;
@@ -343,21 +375,40 @@ dictateButton.addEventListener("click", async () => {
       set("voice-status","Listening · Heard: " + partial);
     });
     recognizer.on("result",event => {
-      if (ended || !event.result.text) return;
+      if (ended) return;
+      if (!event.result.text) { if (flushing) stop(); return; }
       finalText = [finalText,event.result.text].filter(Boolean).join(" ");
       partial = "";
       stop();
     });
     source = context.createMediaStreamSource(stream);
-    processor = context.createScriptProcessor(4096,1,1);
-    processor.onaudioprocess = event => {
-      if (ended) return;
-      try { recognizer.acceptWaveform(event.inputBuffer); }
+    function feed(samples) {
+      if (ended || flushing || !samples?.length) return;
+      audioFrames++;
+      let energy = 0;
+      for (const sample of samples) energy += sample * sample;
+      const level = Math.sqrt(energy / samples.length);
+      peakLevel = Math.max(peakLevel,level);
+      voiceLevel.value = Math.min(100,Math.round(level * 500));
+      try { recognizer.acceptWaveformFloat(samples,context.sampleRate); }
       catch { cleanup("The on-device engine could not process microphone audio."); }
-    };
+    }
+    if (context.audioWorklet && typeof AudioWorkletNode === "function") {
+      try {
+        await context.audioWorklet.addModule("/voice/capture.js");
+        if (ended) return;
+        processor = new AudioWorkletNode(context,"jarvis-capture");
+        processor.port.onmessage = event => feed(event.data);
+        processor.onprocessorerror = () => cleanup("The browser audio processor stopped unexpectedly.");
+      } catch {}
+    }
+    if (!processor) {
+      processor = context.createScriptProcessor(4096,1,1);
+      processor.onaudioprocess = event => feed(event.inputBuffer.getChannelData(0));
+    }
     source.connect(processor);
     processor.connect(context.destination);
-    timer = setTimeout(stop,15000);
+    timer = setTimeout(flush,15000);
     set("voice-status","Listening on this device. Say a command.");
   } catch (error) {
     cleanup(error.name === "NotAllowedError" ? "This browser denied microphone access to the dashboard." :
@@ -587,6 +638,7 @@ function authenticationRequired(env) {
   return response;
 }
 
+const captureWorklet = "class JarvisCapture extends AudioWorkletProcessor {\n  constructor() { super(); this.samples = new Float32Array(2048); this.offset = 0; }\n  process(inputs) {\n    const channel = inputs[0]?.[0];\n    if (!channel) return true;\n    for (const value of channel) {\n      this.samples[this.offset++] = value;\n      if (this.offset === this.samples.length) {\n        this.port.postMessage(this.samples,[this.samples.buffer]);\n        this.samples = new Float32Array(2048);\n        this.offset = 0;\n      }\n    }\n    return true;\n  }\n}\nregisterProcessor(\"jarvis-capture\",JarvisCapture);";
 const voiceAssets = {
   "/voice/engine-worker.js": [null,"text/javascript; charset=utf-8"],
   "/voice/vosk.js": ["https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js","text/javascript; charset=utf-8"],
@@ -632,6 +684,7 @@ export default {
     if (request.method !== "GET") return send({error:"Method not allowed."},405);
     if (url.pathname === "/") return send(page,200,"text/html; charset=utf-8");
     if (url.pathname === "/dashboard.js") return send(client,200,"text/javascript; charset=utf-8");
+    if (url.pathname === "/voice/capture.js") return send(captureWorklet,200,"text/javascript; charset=utf-8");
     if (Object.hasOwn(voiceAssets,url.pathname)) return serveVoiceAsset(url.pathname);
     try {
       if (!["/api/filings","/api/prices","/api/news"].includes(url.pathname)) return send({error:"Not found."},404);

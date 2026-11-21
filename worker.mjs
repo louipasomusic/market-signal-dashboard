@@ -335,7 +335,6 @@ dictateButton.addEventListener("click", async () => {
     if (ended) return;
     set("voice-status","Loading the on-device English model. The first download is about 41 MB.");
     const model = await loadVoiceModel();
-    clearTimeout(deadline);
     if (ended) return;
     recognizer = new model.KaldiRecognizer(context.sampleRate);
     recognizer.on("partialresult",event => {

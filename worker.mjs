@@ -1,4 +1,4 @@
-const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}.workspace{display:grid;grid-template-columns:275px minmax(0,1fr);gap:24px;max-width:1300px;margin:auto;padding:0 20px}.workspace main{margin:0;padding-inline:0;min-width:0}.agent-sidebar{padding-top:32px}.agent-sidebar ul{padding-left:20px;line-height:1.4}@media(max-width:720px){.workspace{grid-template-columns:1fr;gap:0}.agent-sidebar{padding-top:8px}.workspace main{padding-top:0}}</style><div class="workspace"><aside class="agent-sidebar" aria-labelledby="agent-title"><section><h2 id="agent-title">Workspace agent</h2><h3>JARVIS</h3><p id="agent-status" role="status">Checking assignment…</p><button id="appoint-agent" disabled>Appoint JARVIS</button><h3>Tools and skills</h3><ul><li>Stock charts and SEC filings · Dashboard</li><li>Watching and Interested · Dashboard</li><li>Company headlines · Alpaca connection required</li><li>Paper portfolio · Alpaca Paper connection required</li><li>Voice and dictation · On-device browser support</li><li>Premarket research and public transcript review · Scheduled in ChatGPT</li><li>Agent Reach · Pending connection</li><li>Interactive Codex conversation · Pending connection</li></ul></section></aside><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section><section aria-labelledby="jarvis-title"><h2 id="jarvis-title">JARVIS</h2><p id="voice-status" role="status">Read the selected ticker’s headlines aloud or dictate a stock-list command.</p><nav aria-label="Voice controls"><button id="read-news">Read headlines</button><button id="stop-voice">Stop voice</button><button id="mic">Dictate command</button></nav><h3>Company news <span id="news-ticker"></span></h3><button id="refresh-news">Refresh news</button><p id="news-status" role="status"></p><ul id="news-items"></ul></section></main></div><script src="/dashboard.js" defer></script></html>';
+const page = "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>JARVIS · Market Signal</title><style>*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}body{margin:0;background:#070e19;color:#e4f4ff;font:15px system-ui,sans-serif}button,input,select{font:inherit}button,input,select{background:#0d2031;color:#d8f4ff;border:1px solid #284760;border-radius:6px;padding:9px 12px}button{cursor:pointer}button:hover,a:hover{color:#8cf7ff;border-color:#55cfe5}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #5de5f3;outline-offset:3px}button:disabled{cursor:default;opacity:.55}a{color:#72dce6}p{color:#9cb5c8}ul{padding-left:20px}li{margin:8px 0}h1,h2,h3,p{margin-top:0}h2{font-size:18px}h3{font-size:14px}.workspace{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}.agent-sidebar{padding:26px 18px;background:#091522;border-right:1px solid #20384d}.brand{display:block;font-size:27px;font-weight:800;letter-spacing:.24em;color:#86f0ff}.rail-links{display:grid;gap:6px;margin:26px 0}.rail-links a{padding:9px;border:1px solid #20384d;border-radius:6px;text-decoration:none}.tool-list{list-style:none;padding:0;color:#9cb5c8;font-size:13px}.tool-list strong{color:#e4f4ff;display:block}.main{min-width:0;padding:28px clamp(16px,3vw,48px);max-width:1550px;width:100%}.top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:18px}.top h1{letter-spacing:.13em;margin:0;font-size:clamp(20px,3vw,30px)}.top form,.controls,.ranges,#list-command{display:flex;gap:8px;flex-wrap:wrap}.top input{width:94px}.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(245px,1fr);gap:16px}.card{border:1px solid #234458;border-radius:12px;background:linear-gradient(150deg,#102033,#091523);padding:20px;min-width:0}.card h2{letter-spacing:.05em}.chart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}button[aria-pressed=true]{color:#a1fbff;border-color:#52d7e6;background:#103749}#summary{color:#e4f4ff;font-size:32px;font-weight:650;margin:18px 0 10px}#details{font-size:13px;margin:12px 0 0}canvas{width:100%;height:290px}.voice{text-align:center}.core{width:112px;height:112px;border-radius:50%;margin:3px auto 18px;border:1px solid #4ebcda;display:grid;place-items:center;background:radial-gradient(circle,#20718a 0%,#0b2638 52%,#0b1829 70%);box-shadow:0 0 22px #2bc9ee44,inset 0 0 19px #2bc9ee44;color:#c9faff;letter-spacing:.15em;font-size:12px}.voice .controls{justify-content:center}.lists{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lists ul{list-style:none;padding:0}.lists li button{padding:5px 8px;margin-bottom:2px}#list-command input{flex:1;min-width:160px}#news-items,#filings{font-size:14px}@media(max-width:900px){.workspace{grid-template-columns:190px minmax(0,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:620px){.workspace{display:block}.agent-sidebar{border-right:0;border-bottom:1px solid #20384d}.rail-links{display:flex;flex-wrap:wrap;margin:12px 0}.main{padding:16px}.card{padding:14px}}</style><div class=\"workspace\"><aside class=\"agent-sidebar\"><span class=\"brand\">JARVIS</span><nav class=\"rail-links\" aria-label=\"Workspace navigation\"><a href=\"#market\">Market</a><a href=\"#stock-lists\">Stock lists</a><a href=\"#news\">News</a><a href=\"#sec\">SEC filings</a></nav><h2>Workspace agent</h2><p id=\"agent-status\" role=\"status\">Checking assignment…</p><button id=\"appoint-agent\" disabled>Appoint JARVIS</button><h3 style=\"margin-top:24px\">Tools and skills</h3><ul class=\"tool-list\"><li><strong>Market charts</strong>Yahoo Finance, Alpaca IEX, Massive</li><li><strong>Voice controls</strong>On-device speech and dictation</li><li><strong>Premarket brief</strong>Weekdays at 9 a.m. ET in ChatGPT</li><li><strong>Company research</strong>Headlines and SEC filings</li><li><strong>Codex conversation</strong>Connection pending</li><li><strong>Agent Reach</strong>Connection pending</li></ul></aside><main class=\"main\"><header class=\"top\"><h1>MARKET OPERATIONS</h1><form id=\"lookup\"><input name=\"ticker\" aria-label=\"Stock ticker\" value=\"SPY\" maxlength=\"12\" required><select name=\"source\" aria-label=\"Price data source\"><option value=\"yahoo\">Yahoo Finance · Historical</option><option value=\"alpaca\">Alpaca Basic · IEX</option><option value=\"massive\">Massive · End of day</option></select><button>Load ticker</button></form></header><div class=\"grid\"><section class=\"card\" id=\"market\"><div class=\"chart-head\"><h2 id=\"symbol\">SPY</h2><nav class=\"ranges\" aria-label=\"Chart period\"><button data-range=\"7d\" aria-pressed=\"true\">7 days</button><button data-range=\"weekly\" aria-pressed=\"false\">Weekly</button><button data-range=\"monthly\" aria-pressed=\"false\">Monthly</button><button data-range=\"all\" aria-pressed=\"false\">All time</button></nav></div><p id=\"summary\" role=\"status\"></p><canvas hidden id=\"chart\" role=\"img\" aria-label=\"Historical closing prices\"></canvas><p id=\"details\"></p></section><section class=\"card voice\"><div class=\"core\" aria-hidden=\"true\">JARVIS</div><h2>Voice console</h2><p id=\"voice-status\" role=\"status\">Read headlines aloud or dictate a stock-list command.</p><div class=\"controls\"><button id=\"mic\">Dictate command</button><button id=\"read-news\">Read headlines</button><button id=\"stop-voice\">Stop</button></div></section><section class=\"card\" id=\"news\"><h2>Company news <span id=\"news-ticker\"></span></h2><button id=\"refresh-news\">Refresh news</button><p id=\"news-status\" role=\"status\"></p><ul id=\"news-items\"></ul></section><section class=\"card\" id=\"stock-lists\"><h2>Stock lists</h2><form id=\"list-command\"><input name=\"command\" aria-label=\"Stock list command\" placeholder=\"watch AMD or interested in NVDA\" maxlength=\"45\" required><button>Add</button></form><p id=\"list-status\" role=\"status\"></p><div class=\"lists\"><div><h3>Watching</h3><ul id=\"watching\"></ul></div><div><h3>Interested</h3><ul id=\"interested\"></ul></div></div></section><section class=\"card\" id=\"sec\"><h2>SEC filings</h2><p id=\"filingStatus\" role=\"status\"></p><ul id=\"filings\"></ul></section></div></main></div><script src=\"/dashboard.js\" defer></script></html>";
 
 const client = `
 const form = document.querySelector("#lookup");
@@ -96,12 +96,6 @@ async function loadFilings() {
   } catch (error) {
     if (!controller.signal.aborted) set("filingStatus", error.message);
   }
-}
-async function loadPaper() {
-  try {
-    const data = await api("/api/paper");
-    set("paper", "Simulated equity " + usd.format(data.equity) + " · Cash " + usd.format(data.cash) + " · " + data.positions.length + " positions" + (data.positions.length ? " · " + data.positions.map(p => p.symbol + " " + p.quantity).join(", ") : ""));
-  } catch (error) { set("paper", error.message); }
 }
 document.querySelectorAll("[data-range]").forEach(button => button.addEventListener("click", () => {
   range = button.dataset.range;
@@ -270,7 +264,7 @@ appointButton.addEventListener("click",async () => {
 });
 loadAssignment();
 
-loadPrices(); loadFilings(); loadPaper();
+loadPrices(); loadFilings();
 `;
 
 const DAY = 86400000;
@@ -285,11 +279,13 @@ class RequestError extends Error {
 }
 async function upstream(url, source, init = {}) {
   let response;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(),8000);
   try {
-    response = await fetch(url, {...init, redirect: "error", signal: AbortSignal.timeout(8000)});
+    response = await fetch(String(url), {...init, redirect: "error", signal: controller.signal});
   } catch {
     throw new RequestError(502, source + " could not be reached.");
-  }
+  } finally { clearTimeout(timer); }
   if (!response.ok) {
     const message = response.status === 429 ? " rate limit reached." : " returned HTTP " + response.status + ".";
     throw new RequestError(response.status === 429 ? 429 : 502, source + message);
@@ -297,11 +293,9 @@ async function upstream(url, source, init = {}) {
   try { return await response.json(); }
   catch { throw new RequestError(502, source + " returned an invalid response."); }
 }
-function alpacaHeaders(env, paper = false) {
-  const key = paper ? env.ALPACA_PAPER_KEY_ID : env.ALPACA_DATA_KEY_ID;
-  const secret = paper ? env.ALPACA_PAPER_SECRET : env.ALPACA_DATA_SECRET;
-  if (!key || !secret) throw new RequestError(503, (paper ? "Alpaca Paper" : "Alpaca Basic") + " credentials are not configured.");
-  return {"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret};
+function alpacaHeaders(env) {
+  if (!env.ALPACA_DATA_KEY_ID || !env.ALPACA_DATA_SECRET) throw new RequestError(503,"Alpaca market data keys are not configured.");
+  return {"APCA-API-KEY-ID":env.ALPACA_DATA_KEY_ID,"APCA-API-SECRET-KEY":env.ALPACA_DATA_SECRET};
 }
 function normalize(rows) {
   const points = rows.filter(p => Number.isFinite(p.time) && typeof p.close === "number" && Number.isFinite(p.close) && p.close > 0);
@@ -396,17 +390,6 @@ async function liveFilings(symbol, env, snapshot) {
     form:recent.form[i],date:recent.filingDate[i],
     url:secDocumentUrl(company.cik_str,id.replaceAll("-",""),recent.primaryDocument[i]),
   }))};
-}
-async function paper(env) {
-  const init = {headers:alpacaHeaders(env,true)};
-  const origin = "https://paper-api.alpaca.markets/v2";
-  const [account,positions] = await Promise.all([
-    upstream(origin+"/account","Alpaca Paper",init),upstream(origin+"/positions","Alpaca Paper",init),
-  ]);
-  return {
-    equity: Number(account.equity), cash: Number(account.cash),
-    positions: positions.map(p => ({symbol:p.symbol,quantity:p.qty})),
-  };
 }
 function send(body, status = 200, type = "application/json; charset=utf-8") {
   return new Response(type.startsWith("application/json") ? JSON.stringify(body) : body,{status,headers:{
@@ -505,7 +488,6 @@ export default {
     if (url.pathname === "/") return send(page,200,"text/html; charset=utf-8");
     if (url.pathname === "/dashboard.js") return send(client,200,"text/javascript; charset=utf-8");
     try {
-      if (url.pathname === "/api/paper") return send(await paper(env));
       if (!["/api/filings","/api/prices","/api/news"].includes(url.pathname)) return send({error:"Not found."},404);
       const symbol = (url.searchParams.get("symbol") || "").trim().toUpperCase();
       if (!/^[A-Z][A-Z0-9.-]{0,11}$/.test(symbol)) throw new RequestError(400,"Enter a valid U.S. ticker.");

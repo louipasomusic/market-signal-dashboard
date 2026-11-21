@@ -1,4 +1,4 @@
-const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}</style><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section></main><script src="/dashboard.js" defer></script></html>';
+const page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Dashboard</title><style>*{box-sizing:border-box}body{margin:0;background:#101318;color:#e9edf4;font:16px system-ui}main{max-width:1000px;margin:auto;padding:32px 20px}h1{font-size:32px}h2{font-size:19px}p,small{color:#b3bdcb}section{background:#171c24;border:1px solid #303947;border-radius:12px;padding:20px;margin:14px 0}nav,form{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,input,select{font:inherit;color:inherit;background:#222a35;border:1px solid #495568;border-radius:7px;padding:8px 12px}button{cursor:pointer}button[aria-pressed=true]{background:#164a42;border-color:#58c9b1}canvas{width:100%;height:250px}a{color:#84dbc7}li{margin:8px 0}#summary{font-size:22px;color:#e9edf4}#filings{padding-left:20px}</style><main><h1>Market Dashboard</h1><form id="lookup"><input name="ticker" aria-label="Stock ticker" value="SPY" maxlength="12" required><select name="source" aria-label="Price data source"><option value="alpaca">Alpaca Basic · IEX</option><option value="massive">Massive · End of day</option><option value="yahoo">Yahoo Finance · Historical</option></select><button>Load ticker</button></form><section aria-labelledby="lists-title"><h2 id="lists-title">My stock lists</h2><form id="list-command"><input name="command" aria-label="Stock list command" placeholder="watch AMD or interested in NVDA" maxlength="45" required><button>Add to list</button></form><p id="list-status" role="status"></p><h3>Watching</h3><ul id="watching"></ul><h3>Interested</h3><ul id="interested"></ul></section><section><h2 id="symbol">SPY</h2><nav aria-label="Chart period"><button data-range="7d" aria-pressed="true">7 days</button><button data-range="weekly" aria-pressed="false">Weekly</button><button data-range="monthly" aria-pressed="false">Monthly</button><button data-range="all" aria-pressed="false">All time</button></nav><p id="summary" role="status"></p><canvas hidden id="chart" role="img" aria-label="Historical closing prices"></canvas><p id="details"></p></section><section><h2>SEC filings</h2><p id="filingStatus" role="status"></p><ul id="filings"></ul></section><section><h2>Alpaca Paper</h2><p id="paper" role="status"></p></section></main><script src="/dashboard.js" defer></script></html>';
 
 const client = `
 const form = document.querySelector("#lookup");
@@ -111,6 +111,65 @@ document.querySelectorAll("[data-range]").forEach(button => button.addEventListe
 form.addEventListener("submit", event => { event.preventDefault(); loadPrices(); loadFilings(); });
 form.elements.source.addEventListener("change", loadPrices);
 window.addEventListener("resize", draw);
+
+const listKey = "market-signal-lists-v1";
+const categories = ["watching", "interested"];
+const tickerPattern = /^[A-Z][A-Z0-9.-]{0,11}$/;
+let lists = {watching:[], interested:[]};
+try {
+  const saved = JSON.parse(localStorage.getItem(listKey));
+  if (saved) for (const category of categories) {
+    if (Array.isArray(saved[category])) lists[category] = Array.from(new Set(saved[category].filter(symbol => typeof symbol === "string" && tickerPattern.test(symbol))));
+  }
+} catch { set("list-status","Saved lists are unavailable in this browser."); }
+function updateLists(updated, message) {
+  lists = updated;
+  try { localStorage.setItem(listKey, JSON.stringify(lists)); }
+  catch { message += " Changes are available for this session only."; }
+  set("list-status", message);
+  renderLists();
+}
+function renderLists() {
+  for (const category of categories) {
+    const list = document.getElementById(category);
+    list.replaceChildren();
+    if (!lists[category].length) {
+      const empty = document.createElement("li");
+      empty.textContent = "No tickers yet.";
+      list.append(empty);
+    }
+    for (const symbol of lists[category]) {
+      const row = document.createElement("li");
+      const open = document.createElement("button");
+      open.type = "button";
+      open.textContent = symbol;
+      open.addEventListener("click", () => {
+        form.elements.ticker.value = symbol;
+        form.requestSubmit();
+      });
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remove";
+      remove.setAttribute("aria-label","Remove " + symbol + " from " + category);
+      remove.addEventListener("click", () => updateLists({...lists,[category]:lists[category].filter(item => item !== symbol)},symbol + " removed."));
+      row.append(open," ",remove);
+      list.append(row);
+    }
+  }
+}
+document.getElementById("list-command").addEventListener("submit", event => {
+  event.preventDefault();
+  const input = event.currentTarget.elements.command;
+  const match = /^(watch|watching|interested(?: in)?) +\\$?([a-z][a-z0-9.-]{0,11})$/i.exec(input.value.trim());
+  if (!match) { set("list-status","Try watch AMD or interested in NVDA."); return; }
+  const category = match[1].toLowerCase().startsWith("watch") ? "watching" : "interested";
+  const symbol = match[2].toUpperCase();
+  if (lists[category].includes(symbol)) { set("list-status",symbol + " is already in " + category + "."); return; }
+  updateLists({...lists,[category]:[...lists[category],symbol]},symbol + " added to " + category + ".");
+  input.value = "";
+});
+renderLists();
+
 loadPrices(); loadFilings(); loadPaper();
 `;
 

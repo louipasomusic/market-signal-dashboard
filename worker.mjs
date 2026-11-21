@@ -282,7 +282,7 @@ async function upstream(url, source, init = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(),8000);
   try {
-    response = await fetch(String(url), {...init, redirect: "error", signal: controller.signal});
+    response = await fetch(String(url), {...init, redirect: "manual", signal: controller.signal});
   } catch {
     throw new RequestError(502, source + " could not be reached.");
   } finally { clearTimeout(timer); }

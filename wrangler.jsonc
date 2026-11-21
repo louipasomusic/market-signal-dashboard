@@ -1,0 +1,7 @@
+{
+  "name": "market-signal-dashboard",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-20",
+  "workers_dev": false,
+  "preview_urls": false
+}

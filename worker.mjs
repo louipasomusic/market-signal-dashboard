@@ -243,19 +243,17 @@ const dictateButton = document.getElementById("mic");
 dictateButton.addEventListener("click", async () => {
   if (dictateButton.disabled) return;
   const Speech = window.SpeechRecognition;
-  if (!Speech?.available || !("processLocally" in Speech.prototype) || !navigator.mediaDevices?.getUserMedia) {
+  if (!Speech?.available || !("processLocally" in Speech.prototype)) {
     set("voice-status","This browser cannot run on-device microphone dictation. Open the dashboard directly in desktop Chrome.");
     return;
   }
   dictateButton.disabled = true;
-  let stream;
   let timer;
   let finished = false;
   function finish(message) {
     if (finished) return;
     finished = true;
     clearTimeout(timer);
-    stream?.getTracks().forEach(track => track.stop());
     recognition = null;
     dictateButton.disabled = false;
     set("voice-status", message);
@@ -268,28 +266,26 @@ dictateButton.addEventListener("click", async () => {
       finish(voiceInstall.hidden ? "On-device English speech is unavailable in this browser." : "Select Enable English voice to download the on-device speech pack.");
       return;
     }
-    set("voice-status","Waiting for microphone access…");
-    stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    const track = stream.getAudioTracks()[0];
-    if (!track || track.readyState !== "live") {
-      finish("No active microphone was found. Select a microphone in your browser or system settings.");
-      return;
-    }
     const session = recognition = new Speech();
     session.lang = "en-US";
     session.processLocally = true;
-    let heard = false;
+    session.interimResults = true;
+    const input = document.querySelector("#list-command").elements.command;
+    let transcript = "";
+    let finalResult = false;
     session.onaudiostart = () => { if (!finished) set("voice-status","Listening on this device. Say a command."); };
     session.onspeechstart = () => { if (!finished) set("voice-status","Listening · Speech detected."); };
     session.onresult = event => {
       if (finished) return;
-      heard = true;
-      const input = document.querySelector("#list-command").elements.command;
-      input.value = event.results[event.resultIndex ?? 0][0].transcript.trim().replace(/[.!?]+$/,"");
-      input.focus();
-      set("voice-status","Heard: " + input.value + " · Review it, then press Add.");
+      transcript = Array.from(event.results, result => result[0].transcript).join(" ").trim().replace(/[.!?]+$/,"");
+      finalResult = Array.from(event.results).some(result => result.isFinal);
+      if (!transcript) return;
+      input.value = transcript;
+      if (finalResult) input.focus();
+      set("voice-status",(finalResult ? "Heard: " : "Listening · Heard: ") + transcript + (finalResult ? " · Review it, then press Add." : ""));
     };
     session.onerror = event => {
+      if (transcript) { input.focus(); finish("Heard: " + transcript + " · Review it, then press Add."); return; }
       const messages = {
         "not-allowed":"Allow microphone access for this site, then try again.",
         "service-not-allowed":"This browser blocked on-device speech. Open the dashboard directly in desktop Chrome.",
@@ -301,13 +297,16 @@ dictateButton.addEventListener("click", async () => {
       if (event.error === "language-not-supported" && typeof Speech.install === "function") voiceInstall.hidden = false;
       finish(Object.hasOwn(messages,event.error) ? messages[event.error] : "Dictation ended (" + event.error + ").");
     };
-    session.onend = () => finish(heard ? document.getElementById("voice-status").textContent : "Listening ended without a command. Check your microphone input and try again.");
+    session.onend = () => {
+      if (transcript) input.focus();
+      finish(transcript ? "Heard: " + transcript + " · Review it, then press Add." : "The dashboard speech engine returned no words. Try desktop Chrome, or use Windows voice typing in the command field (Windows key + H).");
+    };
     timer = setTimeout(() => {
       finish("Dictation timed out. Check the browser microphone indicator and try again.");
       session.abort();
     },20000);
-    set("voice-status","Microphone connected. Starting dictation…");
-    session.start(track);
+    set("voice-status","Starting browser dictation…");
+    session.start();
   } catch (error) {
     finish(error.name === "NotAllowedError" ? "Microphone access was denied. Allow it in the browser’s site settings or open the dashboard directly in desktop Chrome." :
       error.name === "NotFoundError" ? "No microphone was found. Connect or select an input device." :

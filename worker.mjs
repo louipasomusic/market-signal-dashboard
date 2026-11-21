@@ -433,10 +433,42 @@ async function authorized(request, env) {
   }
 }
 
+async function passwordAuthorized(request, env) {
+  if (!env.OWNER_EMAIL || !env.OWNER_PASSWORD || env.OWNER_PASSWORD.length < 24 ||
+      new URL(request.url).protocol !== "https:") return false;
+  const header = request.headers.get("Authorization");
+  if (!header?.startsWith("Basic ") || header.length > 4096) return false;
+  try {
+    const supplied = decodeBase64(header.slice(6));
+    const expected = new TextEncoder().encode(env.OWNER_EMAIL + ":" + env.OWNER_PASSWORD);
+    const [left, right] = await Promise.all([supplied,expected].map(async value =>
+      new Uint8Array(await crypto.subtle.digest("SHA-256",value))));
+    let difference = 0;
+    for (let i = 0; i < left.length; i++) difference |= left[i] ^ right[i];
+    return difference === 0;
+  } catch {
+    return false;
+  }
+}
+function authenticationRequired(env) {
+  const enabled = Boolean(env.OWNER_EMAIL && env.OWNER_PASSWORD?.length >= 24);
+  const response = send(
+    '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market Signal Dashboard Sign-in</title><main><h1>Market Signal Dashboard</h1><p>' +
+      (enabled ? "Sign in with the owner email and dashboard password." :
+        "Owner sign-in setup is pending. In Cloudflare Workers &amp; Pages, open market-signal-dashboard, then Settings, then Variables and Secrets. Add an encrypted OWNER_PASSWORD secret with a unique password of at least 24 characters.") +
+      '</p></main></html>',
+    enabled ? 401 : 503, "text/html; charset=utf-8");
+  if (enabled) response.headers.set("WWW-Authenticate",'Basic realm="Market Signal Dashboard", charset="UTF-8"');
+  return response;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (!(await authorized(request,env))) return send({error:"Owner authentication required."},403);
+    if (!(await passwordAuthorized(request,env)) && !(await authorized(request,env))) {
+      if (url.pathname === "/" && request.method === "GET") return authenticationRequired(env);
+      return send({error:"Owner authentication required."},403);
+    }
 
     if (url.pathname === "/api/agent-assignment") {
       if (!env.WORKSPACE_ASSIGNMENTS) return send({error:"Workspace assignment storage is not configured."},503);

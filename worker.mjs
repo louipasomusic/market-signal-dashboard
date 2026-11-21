@@ -127,7 +127,7 @@ class RequestError extends Error {
 async function upstream(url, source, init = {}) {
   let response;
   try {
-    response = await fetch(url, {...init, signal: AbortSignal.timeout(8000)});
+    response = await fetch(url, {...init, redirect: "error", signal: AbortSignal.timeout(8000)});
   } catch {
     throw new RequestError(502, source + " could not be reached.");
   }
